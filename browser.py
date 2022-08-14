@@ -31,16 +31,18 @@ class Browser:
 
     def open_url(self, url: str = 'https://www.google.ru'):
 
+        self.url = url
+
         self.driver.get(url)
         print(f'\nOpening {url}:')
         time.sleep(random.randint(10, 16))
 
-        self.url = url
         self.page_source = self.driver.page_source
+        self._create_soup_object()
 
         return self.url, self.page_source
 
-    def create_soup_object(self):
+    def _create_soup_object(self):
 
         self.soup = BeautifulSoup(self.page_source, 'lxml')
         return self.soup
@@ -75,7 +77,6 @@ class Browser:
 
         return self.page_urls
 
-
     def get_catalog_urls(self):
 
         self.catalog_urls = set()
@@ -96,12 +97,10 @@ class Browser:
 
         return self.product_urls
 
-
-
     def _init_dataframe_settings(self):
 
         self.group_info = []
-        self.group_columns = ['name', 'url', 'header', 'products', 'longest_name', 'annotations', 'errors']
+        self.group_columns = ['name', 'url', 'header', 'products on page', 'total products in category', 'longest_name', 'annotations', 'errors']
 
         return self.group_columns, self.group_info
 
@@ -112,10 +111,10 @@ class Browser:
 
         return self.df
 
-    def _write_dataframe_to_disk(self, type: str = 'listing'):
+    def _write_dataframe_to_disk(self, site_domain: str, type: str = 'listing'):
 
-        print('\n-----------------------------------\nWrite to disk\n-----------------------------------\n')
-        self.df.to_csv(f'{datetime.date.today()}-{type}.csv')
+        print(f'\n-----------------------------------\nWrite to disk: {self.project_path}\\{datetime.date.today()}-{site_domain}-{type}.csv\n-----------------------------------\n')
+        self.df.to_csv(f'{datetime.date.today()}-{site_domain}-{type}.csv', sep=';')
 
     # listing features, some variables appears in child classes
     def _find_longest_n_shortest_titles(self):
@@ -125,13 +124,13 @@ class Browser:
 
         return self.longest_name, self.shortest_name
 
-    def _load_listings_list(self, file: str = 'citilink_listings2.txt'):
+    def _load_listings_list(self, file: str):
 
-        print('\n-----------------------------------\nLoading urls list\n-----------------------------------\n')
+        print(f'\n-----------------------------------\nLoading urls list from {file}\n-----------------------------------\n')
 
         self.listings_url_list = {}
 
-        with open(file, 'r') as file:
+        with open(file, 'r', encoding='utf-8') as file:
             lines = file.read().splitlines()
             for line in lines:
                 group_name = line.split(';')[0]
