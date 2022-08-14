@@ -31,16 +31,18 @@ class Browser:
 
     def open_url(self, url: str = 'https://www.google.ru'):
 
+        self.url = url
+
         self.driver.get(url)
         print(f'\nOpening {url}:')
         time.sleep(random.randint(10, 16))
 
-        self.url = url
         self.page_source = self.driver.page_source
+        self._create_soup_object()
 
         return self.url, self.page_source
 
-    def create_soup_object(self):
+    def _create_soup_object(self):
 
         self.soup = BeautifulSoup(self.page_source, 'lxml')
         return self.soup
@@ -112,10 +114,10 @@ class Browser:
 
         return self.df
 
-    def _write_dataframe_to_disk(self, type: str = 'listing'):
+    def _write_dataframe_to_disk(self, site_domain: str, type: str = 'listing'):
 
         print('\n-----------------------------------\nWrite to disk\n-----------------------------------\n')
-        self.df.to_csv(f'{datetime.date.today()}-{type}.csv')
+        self.df.to_csv(f'{datetime.date.today()}-{site_domain}-{type}.csv')
 
     # listing features, some variables appears in child classes
     def _find_longest_n_shortest_titles(self):

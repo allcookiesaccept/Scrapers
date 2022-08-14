@@ -2,7 +2,7 @@ from browser import Browser
 from citilink import Citilink
 
 
-def main(name):
+def main():
     pass
 
 
