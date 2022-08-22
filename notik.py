@@ -66,7 +66,7 @@ class Notik(Browser):
                                        '/index/soft.htm'
                                        '/index/tv.htm']
 
-        self.empty_filter_request = '?srch=true&full='
+        self.empty_filter_request = '?srch =true&full='
         self.domain = 'https://www.notik.ru'
 
     def _find_available_products(self):
